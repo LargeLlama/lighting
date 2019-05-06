@@ -23,28 +23,102 @@
 
 //lighting functions
 color get_lighting( double *normal, double *view, color alight, double light[2][3], double *areflect, double *dreflect, double *sreflect) {
+  //variables to calculate light
+  color ambient, diffuse, specular;
+
+  //variable to return
   color i;
+
+  //normalize everything
+  normalize(normal);
+  normalize(view);
+  normalize(light[LOCATION]);
+
+  //calculate the ambient, diffuse, and specular. store in their respective variables
+  ambient = calculate_ambient(alight, areflect);
+  diffuse = calculate_diffuse(light, dreflect, normal);
+  specular = calculate_specular(light, sreflect, view, normal);
+
+  //modify RGB of i to fit the 
+  i.red = ambient.red + diffuse.red + specular.red;
+  i.green = ambient.green + diffuse.green + specular.green;
+  i.blue = ambient.blue + diffuse.blue + specular.blue;
+
+  //make sure i doesn't exceed 255 for any of its RGB values
+  limit_color(&i);
+
   return i;
 }
 
 color calculate_ambient(color alight, double *areflect ) {
-  color a;
-  return a;
+  color ambient;
+
+  ambient.red = alight.red * areflect[RED];
+  ambient.green = alight.green * areflect[GREEN];
+  ambient.blue = alight.blue * areflect[BLUE];
+
+  return ambient;
 }
 
 color calculate_diffuse(double light[2][3], double *dreflect, double *normal ) {
-  color d;
-  return d;
+  color diffuse;
+  //double to store the cosine of the angle
+  double cos;
+
+  //set cos to dot product of the normal and the light on the location
+  cos = dot_product(normal, light[LOCATION]);
+  if (cos < 0)	//make sure its positive
+    cos = 0;
+
+  //set the RGB values
+  diffuse.red = light[COLOR][RED] * dreflect[RED] * cos;
+  diffuse.green = light[COLOR][GREEN] * dreflect[GREEN] * cos;
+  diffuse.blue = light[COLOR][BLUE] * dreflect[BLUE] * cos;
+
+  return diffuse;
 }
 
 color calculate_specular(double light[2][3], double *sreflect, double *view, double *normal ) {
+  color specular;
+  
+  //store the cos and an array of doubles
+  double cos;
+  double r[3];
 
-  color s;
-  return s;
+  //set cosine to dot product of the normal and the location of light source
+  cos = dot_product(normal, light[LOCATION]);
+
+  //loop thru, setting value of each element in r
+  for (int i = 0; i < 3; i++)
+    r[i] = 2 * normal[i] * cos - light[LOCATION][i];
+  
+  //re-assign value to cos as dotproduct of the new array and the view
+  cos = dot_product(r, view);
+  if (cos < 0) {
+    cos = 0;
+  }
+
+  cos = pow(cos, SPECULAR_EXP);
+
+  //set the RGB values
+  specular.red = light[COLOR][RED] * sreflect[RED] * cos;
+  specular.green = light[COLOR][GREEN] * sreflect[GREEN] * cos;
+  specular.blue = light[COLOR][BLUE] * sreflect[BLUE] * cos;
+
+  return specular;
 }
 
 //limit each component of c to a max of 255
 void limit_color( color * c ) {
+  if ((*c).red > 255) {
+    (*c).red = 255;
+  }
+  if ((*c).green > 255) {
+    (*c).green = 255;
+  }
+  if ((*c).blue > 255) {
+    (*c).blue = 255;
+  }
 }
 
 //vector functions

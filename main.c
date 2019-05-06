@@ -22,28 +22,28 @@ int main(int argc, char **argv) {
   double sreflect[3];
 
   // ambient light
-  ambient.red = 50;
-  ambient.green = 50;
-  ambient.blue = 50;
+  ambient.red = 0;
+  ambient.green = 0;
+  ambient.blue = 0;
 
   // one point light source
-  light[LOCATION][0] = 0.5;
-  light[LOCATION][1] = 0.75;
-  light[LOCATION][2] = 1;
+  light[LOCATION][0] = 0.2;
+  light[LOCATION][1] = 0.1;
+  light[LOCATION][2] = 0.8;
 
-  light[COLOR][RED] = 0;
-  light[COLOR][GREEN] = 255;
+  light[COLOR][RED] = 200;
+  light[COLOR][GREEN] = 0;
   light[COLOR][BLUE] = 255;
 
   // view vector
-  view[0] = 0;
-  view[1] = 0;
-  view[2] = 1;
+  view[0] = 1;
+  view[1] = 1;
+  view[2] = 0;
 
   // reflective constants
-  areflect[RED] = 0.1;
-  areflect[GREEN] = 0.1;
-  areflect[BLUE] = 0.1;
+  areflect[RED] = 0;
+  areflect[GREEN] = 0;
+  areflect[BLUE] = 0;
 
   dreflect[RED] = 0.5;
   dreflect[GREEN] = 0.5;
